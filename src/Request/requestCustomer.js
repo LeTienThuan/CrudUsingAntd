@@ -47,3 +47,13 @@ export const  deleteCustomer = async (key) =>{
         method: 'DELETE'
     })
 }
+export const findCustomer = async (key) =>{
+    try {
+        let customer = {};
+        const response = await fetch(`https://crudexample-766eb-default-rtdb.firebaseio.com/customers/${key}.json`)
+        customer = await response.json();
+        return {key,...customer};
+    } catch (e) {
+        console.log(e)
+    }
+}

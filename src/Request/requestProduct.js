@@ -9,7 +9,8 @@ export const getProducts = async () =>{
             key: key,
             name: responseData[key].name,
             trademark: responseData[key].trademark,
-            description: responseData[key].description
+            description: responseData[key].description,
+            price: responseData[key].price
         })
     }
     return loadedCustomer;
@@ -46,4 +47,14 @@ export const  deleteProduct = async (key) =>{
     await fetch(`https://crudexample-766eb-default-rtdb.firebaseio.com/products/${key}.json`,{
         method: 'DELETE'
     })
+}
+export const findProduct = async (key) =>{
+    try {
+        let product = {};
+        const response = await fetch(`https://crudexample-766eb-default-rtdb.firebaseio.com/products/${key}.json`)
+        product = await response.json();
+        return {key,...product};
+    } catch (e) {
+        console.log(e)
+    }
 }

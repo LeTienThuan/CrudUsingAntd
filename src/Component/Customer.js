@@ -91,7 +91,8 @@ const Customer = () => {
         return key;
     }
     const handAddCustomer = async () => {
-        const key = await saveTemperatureCustomer();
+ //       const key = await saveTemperatureCustomer();
+        const key =Date.now().toString();
         const newData = [...data];
         const record = {name: '', age: '', address: ''}
         newData.push({key, ...record});
@@ -112,8 +113,6 @@ const Customer = () => {
                 setData(newData);
                 setEditingKey('');
                 form.resetFields();
-            } else {
-
             }
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
@@ -194,6 +193,7 @@ const Customer = () => {
                     onClick={handAddCustomer}
 
             >Add New Customer</Button>
+
             <Form form={form} component={false}>
                 <Table
                     components={{

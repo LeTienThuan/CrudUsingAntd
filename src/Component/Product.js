@@ -1,6 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {Table, Input, Popconfirm, Form, Typography, Space, message, Button} from 'antd';
+import {Table, Input, Popconfirm, Form, Typography, Space, message, Button, InputNumber} from 'antd';
 import {addProduct, deleteProduct, editProduct, getProducts} from "../Request/requestProduct";
+
+export const formatter = new Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND',
+})
 
 const EditableCell = ({
                           editing,
@@ -12,7 +17,7 @@ const EditableCell = ({
                           children,
                           ...restProps
                       }) => {
-    const inputNode =  <Input/>;
+    const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
     return (
         <td {...restProps}>
             {editing ? (
@@ -52,7 +57,8 @@ const Product = () => {
                     key: key,
                     name: responseData[key].name,
                     trademark: responseData[key].trademark,
-                    description: responseData[key].description
+                    description: responseData[key].description,
+                    price: responseData[key].price
                 })
             }
             setData(loadedProduct)
@@ -70,8 +76,8 @@ const Product = () => {
     };
 
     const cancel = async (record) => {
-        const {key='', name='', trademark='', description=''} = record;
-        if (name === '' && trademark === '' && description === '') {
+        const {key = '', name = '', trademark = '', description = '', price = 0} = record;
+        if (name === '' && trademark === '' && description === '' && price === 0) {
             await deleteProduct(key);
         }
         await getProducts().then(products => setData(products))
@@ -85,7 +91,7 @@ const Product = () => {
     }
     const saveTemperatureProduct = async () => {
         let key = '';
-        const record = {name: '', trademark: '', description: ''};
+        const record = {name: '', trademark: '', description: '', price: 0};
         const response = (await addProduct(record)).json()
         await response.then(result => key = result['name'])
         return key;
@@ -93,7 +99,7 @@ const Product = () => {
     const handAddProduct = async () => {
         const key = await saveTemperatureProduct();
         const newData = [...data];
-        const record = {name: '', trademark: '', description: ''};
+        const record = {name: '', trademark: '', description: '', price: 0};
         newData.push({key, ...record});
         setData(newData);
         setEditingKey(key);
@@ -124,13 +130,13 @@ const Product = () => {
         {
             title: 'Name',
             dataIndex: 'name',
-            width: '25%',
+            width: '20%',
             editable: true,
         },
         {
             title: 'Trademark',
             dataIndex: 'trademark',
-            width: '15%',
+            width: '10%',
             editable: true,
         },
         {
@@ -140,8 +146,18 @@ const Product = () => {
             editable: true,
         },
         {
+            title: 'Price',
+            dataIndex: 'price',
+            width: '10%',
+            editable: true,
+            render: price =>{
+                return formatter.format(price);
+            }
+        },
+        {
             title: 'Operation',
             dataIndex: 'operation',
+            width: '10%',
             render: (_, record) => {
                 const editable = isEditing(record);
                 return editable ? (
@@ -158,7 +174,7 @@ const Product = () => {
               <a>Cancel</a>
             </Popconfirm>
           </span>
-                ) : (<Space>
+                ) : (<Space size='large'>
                         <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
                             Edit
                         </Typography.Link>
@@ -181,7 +197,7 @@ const Product = () => {
             ...col,
             onCell: (record) => ({
                 record,
-                inputType: 'text',
+                inputType: col.dataIndex === 'price' ? 'number' : 'text',
                 dataIndex: col.dataIndex,
                 title: col.title,
                 editing: isEditing(record),
