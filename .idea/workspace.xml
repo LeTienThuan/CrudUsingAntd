@@ -5,21 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="faa77b79-f8b6-4908-8a43-5a7999028dc2" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/CrudUsingAntd.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Component/CustomerInformation.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Component/EdittableCell.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Component/SelectCustomer.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Component/SelectProduct.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Request/requestOrder.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Component/Customer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Component/Customer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Component/EdittableCell.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Component/EdittableCell.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Component/Order.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Component/Order.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Component/Product.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Component/Product.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Request/requestCustomer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Request/requestCustomer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Request/requestProduct.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Request/requestProduct.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Request/requestOrder.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Request/requestOrder.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,6 +77,7 @@
       <workItem from="1648377812500" duration="1282000" />
       <workItem from="1648379127306" duration="37000" />
       <workItem from="1648431883916" duration="28873000" />
+      <workItem from="1648478463332" duration="10150000" />
     </task>
     <servers />
   </component>

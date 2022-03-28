@@ -1,5 +1,5 @@
 import {Form, InputNumber, Select} from "antd";
-import React from "react";
+import React, {useState} from "react";
 import {findCustomer} from "../Request/requestCustomer";
 import {findProduct} from "../Request/requestProduct";
 
@@ -8,23 +8,29 @@ const EditableCell = ({
                           editing,
                           dataIndex,
                           title,
+                            form,
                           inputType,
-                          record,
+                          record = {},
                           index,
                           children,
                           updateCustomerSelected,
                           updateProductSelected,
                           ...restProps
                       }) => {
-
+    const [isChange, setIsChange] = useState(false);
+    const {total = 0, price = 0} = record;
     const inputNode = setInputNode(inputType, dataIndex, data);
 
     async function handleOnchangeCustomer(key) {
         const customer = await findCustomer(key);
         updateCustomerSelected(customer)
     }
-    async function handleOnchangeProduct(key){
+
+    async function handleOnchangeProduct(key) {
         const product = await findProduct(key);
+        form.setFieldsValue({price: product.price})
+        setIsChange(true);
+        console.log(form.getFieldsValue())
     }
 
     function setInputNode(inputType, dataIndex, data) {
@@ -34,7 +40,7 @@ const EditableCell = ({
                     return <Select.Option key={customer['key']}
                                           value={customer['key']}
                     >
-                        <b>Name:</b> {customer['name']}
+                        {customer['name']}
                     </Select.Option>
                 })}
             </Select>
@@ -52,9 +58,12 @@ const EditableCell = ({
         }
         if (inputType === 'number' && dataIndex === 'quantity') {
             return <InputNumber onChange={updateProductSelected}/>
-        } else {
-            return <InputNumber/>
         }
+        if (dataIndex === 'price' || dataIndex === 'total') {
+            return (<InputNumber style={{cursor: 'not-allowed'}} readOnly={true}/>)
+
+        }
+
     }
 
     return (

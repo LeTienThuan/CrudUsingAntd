@@ -87,15 +87,13 @@ const Order = () => {
             title: 'Price',
             dataIndex: 'price',
             width: '15%',
-            editable: false,
-
+            editable: true,
         },
         {
             title: 'Total',
             dataIndex: 'total',
             width: '15%',
-            editable: false,
-
+            editable: true,
         },
         {
             title: 'Operation',
@@ -128,9 +126,10 @@ const Order = () => {
     const updateCustomerSelected = (values) =>{
         setCustomerSelected(values)
     }
-    const updateProductSelected = async (product) =>{
+    const updateProductSelected = async (productSelected) =>{
+        const {price} = productSelected;
+        form.setFieldsValue({price})
         console.log(form.getFieldsValue())
-
     }
 
     const mergedColumns = columns.map((col) => {
@@ -143,6 +142,7 @@ const Order = () => {
             onCell: (record) => ({
                 data,
                 record,
+                form,
                 inputType: setInputType(col.dataIndex),
                 dataIndex: col.dataIndex,
                 title: col.title,

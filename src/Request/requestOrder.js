@@ -1,4 +1,4 @@
-import {findCustomer} from "./requestCustomer";
+
 
 export const getOrders = async () =>{
     const response = await fetch('https://crudexample-766eb-default-rtdb.firebaseio.com/orders.json');
@@ -7,11 +7,9 @@ export const getOrders = async () =>{
     const loadedOrders = [];
 
     for (const key in responseData) {
-        const customerKey=  responseData[key].customer;
-        const customer = await findCustomer(customerKey)
         loadedOrders.push({
             key: key,
-            customer: customer['name'],
+            customer: responseData[key].customer,
             product: responseData[key].product,
             quantity: responseData[key].quantity,
             price: responseData[key].price,
