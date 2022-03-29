@@ -83,15 +83,14 @@ const Customer = () => {
         await getCustomers().then(customers => setData(customers));
         message.success('Delete Successfully')
     }
-    const saveTemperatureCustomer = async () => {
-        let key = '';
-        const record = {name: '', age: '', address: ''}
-        const response = (await addCustomer(record)).json()
-        await response.then(result => key = result['name'])
-        return key;
-    }
+    // const saveTemperatureCustomer = async () => {
+    //     let key = '';
+    //     const record = {name: '', age: '', address: ''}
+    //     const response = (await addCustomer(record)).json()
+    //     await response.then(result => key = result['name'])
+    //     return key;
+    // }
     const handAddCustomer = async () => {
- //       const key = await saveTemperatureCustomer();
         const key =Date.now().toString();
         const newData = [...data];
         const record = {name: '', age: '', address: ''}

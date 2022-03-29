@@ -1,7 +1,9 @@
 import {Form, InputNumber, Select} from "antd";
-import React, {useState} from "react";
+import React from "react";
 import {findCustomer} from "../Request/requestCustomer";
 import {findProduct} from "../Request/requestProduct";
+import {formatter} from "./Product";
+
 
 const EditableCell = ({
                           data,
@@ -14,23 +16,25 @@ const EditableCell = ({
                           index,
                           children,
                           updateCustomerSelected,
-                          updateProductSelected,
                           ...restProps
                       }) => {
-    const [isChange, setIsChange] = useState(false);
-    const {total = 0, price = 0} = record;
+
     const inputNode = setInputNode(inputType, dataIndex, data);
 
     async function handleOnchangeCustomer(key) {
         const customer = await findCustomer(key);
         updateCustomerSelected(customer)
     }
+    function handleOnchangeQuantity(quantity){
+        let price = form.getFieldValue('price');
+        form.setFieldsValue({total: price * quantity })
+    }
+
 
     async function handleOnchangeProduct(key) {
+        const {quantity} = form.getFieldsValue();
         const product = await findProduct(key);
-        form.setFieldsValue({price: product.price})
-        setIsChange(true);
-        console.log(form.getFieldsValue())
+        form.setFieldsValue({price: product.price, total: product.price * quantity})
     }
 
     function setInputNode(inputType, dataIndex, data) {
@@ -57,11 +61,14 @@ const EditableCell = ({
             </Select>
         }
         if (inputType === 'number' && dataIndex === 'quantity') {
-            return <InputNumber onChange={updateProductSelected}/>
+            return <InputNumber min={1}  onChange={handleOnchangeQuantity}/>
         }
         if (dataIndex === 'price' || dataIndex === 'total') {
-            return (<InputNumber style={{cursor: 'not-allowed'}} readOnly={true}/>)
-
+            let price = form.getFieldValue('price');
+            let quantity = form.getFieldValue('quantity');
+            return (<div>
+                        {dataIndex === 'price' ? formatter.format(price) : formatter.format(quantity * price)}
+                    </div>)
         }
 
     }

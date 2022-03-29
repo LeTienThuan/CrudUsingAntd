@@ -1,17 +1,18 @@
 import React, {useEffect, useState} from 'react';
-import {Table, Popconfirm, Form, Typography, Button} from 'antd';
+import {Button, Form, Popconfirm, Space, Table, Typography} from 'antd';
 import {getCustomers} from "../Request/requestCustomer";
 import {getProducts} from "../Request/requestProduct";
-import {getOrders} from "../Request/requestOrder";
+import {addOrder, deleteOrder, editOrder, getOrders} from "../Request/requestOrder";
 import CustomerInformation from "./CustomerInformation";
 import EditableCell from "./EdittableCell";
+import {formatter} from "./Product";
 
 const Order = () => {
     const [form] = Form.useForm();
     const [data, setData] = useState({
-        customers: [],
-        products: [],
-        orders: []
+        dataCustomers: [],
+        dataProducts: [],
+        dataOrders: []
     });
     const [editingKey, setEditingKey] = useState('');
     const [customerSelected, setCustomerSelected] = useState({});
@@ -35,22 +36,34 @@ const Order = () => {
 
     const edit = (record) => {
         form.setFieldsValue({
-            ...record
+            ...record, customer: record.customerObj.key, product: record.productKey
         });
         setEditingKey(record.key);
+        setCustomerSelected(record.customerObj)
     };
-    const handleAddOrder = () =>{
-     /*   const key = Date.now().toString();
-        const newData = [...data.orders];
-        const newOrder = {key,customer: '', product:'', quantity:0, price:0, total:0};
-        newData.push(newOrder)
+    const handleAddOrder = () => {
+        const key = Date.now().toString();
+        const dataOrders = [...data.dataOrders];
+        dataOrders.push({key})
+        setData({...data, dataOrders});
+        form.setFieldsValue({customer: '', product: '', quantity: 1, price: 0, total: 0});
         setEditingKey(key);
-        setData(prev => {
-            return {...prev, orders: newData}
-        })*/
     }
-
+    const removeCustomer = async (key) => {
+        await deleteOrder(key);
+        await getOrders().then(dataOrders => setData(prevState => {
+            return {...prevState, dataOrders}
+        }))
+    }
     const cancel = () => {
+        const index = data.dataOrders.findIndex((item) => editingKey === item.key);
+        if (index > -1 && data.dataOrders[index].customer === undefined) {
+            const newData = data.dataOrders.filter((order) => {
+                return order.key !== data.dataOrders[index].key
+            })
+            setData({...data, dataOrders: newData})
+        }
+        setCustomerSelected({})
         setEditingKey('');
     };
     const setInputType = (dataIndex) => {
@@ -60,8 +73,28 @@ const Order = () => {
             return 'number'
         }
     }
-    const save = (key) =>{
-
+    const save = async (key) => {
+        const row = await form.validateFields();
+        const index = data.dataOrders.findIndex((item) => key === item.key);
+        if (index > -1) {
+            if (data.dataOrders[index].customer === undefined) {
+                await addOrder(row);
+                await getOrders().then(dataOrders => setData(prevState => {
+                    return {...prevState, dataOrders}
+                }))
+                setEditingKey('');
+                setCustomerSelected({})
+                form.resetFields();
+            } else {
+                await editOrder(key, row);
+                await getOrders().then(dataOrders => setData(prevState => {
+                    return {...prevState, dataOrders}
+                }))
+                setEditingKey('');
+                setCustomerSelected({})
+                form.resetFields();
+            }
+        }
     }
 
     const columns = [
@@ -88,12 +121,18 @@ const Order = () => {
             dataIndex: 'price',
             width: '15%',
             editable: true,
+            render: (record) => {
+                return formatter.format(record)
+            }
         },
         {
             title: 'Total',
             dataIndex: 'total',
             width: '15%',
             editable: true,
+            render: (record) => {
+                return formatter.format(record)
+            }
         },
         {
             title: 'Operation',
@@ -114,22 +153,22 @@ const Order = () => {
               <a>Cancel</a>
             </Popconfirm>
           </span>
-                ) : (
-                    <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-                        Edit
-                    </Typography.Link>
+                ) : (<Space>
+                        <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
+                            Edit
+                        </Typography.Link>
+                        <Popconfirm title='Sure to delete' onConfirm={() => removeCustomer(record.key)}>
+                            <a>Delete</a>
+                        </Popconfirm>
+                    </Space>
+
                 );
             },
         },
     ];
 
-    const updateCustomerSelected = (values) =>{
+    const updateCustomerSelected = (values) => {
         setCustomerSelected(values)
-    }
-    const updateProductSelected = async (productSelected) =>{
-        const {price} = productSelected;
-        form.setFieldsValue({price})
-        console.log(form.getFieldsValue())
     }
 
     const mergedColumns = columns.map((col) => {
@@ -147,14 +186,13 @@ const Order = () => {
                 dataIndex: col.dataIndex,
                 title: col.title,
                 editing: isEditing(record),
-                updateCustomerSelected,
-                updateProductSelected
+                updateCustomerSelected
             }),
         };
     });
     return (
         <>
-            <div style={{display:"flex", justifyContent:'space-between'}}>
+            <div style={{display: "flex", justifyContent: 'space-between'}}>
                 <Button type='primary' size={"large"} onClick={handleAddOrder}>
                     Add New Order
                 </Button>
@@ -166,6 +204,9 @@ const Order = () => {
                         body: {
                             cell: EditableCell,
                         },
+                    }}
+                    onChange={() => {
+                        console.log('called')
                     }}
                     bordered
                     dataSource={data.dataOrders}
